@@ -24,7 +24,7 @@ export function TokenTable({ tokens }: TokenTableProps) {
                         <tr>
                             <th className="px-6 py-4">Token</th>
                             <th className="px-6 py-4">Balance</th>
-                            <th className="px-6 py-4">Price</th>
+                            {/* <th className="px-6 py-4">Price</th> */}
                             <th className="px-6 py-4">Value</th>
                         </tr>
                     </thead>
@@ -39,10 +39,10 @@ export function TokenTable({ tokens }: TokenTableProps) {
                                     </div>
                                 </td>
                                 <td className="px-6 py-4 text-slate-300">{token.balance}</td>
-                                <td className="px-6 py-4 text-slate-300">
+                                {/* <td className="px-6 py-4 text-slate-300">
                                     {mounted ? formatCompactCurrency(token.priceUsd ?? 0) : "--"}
 
-                                </td>
+                                </td> */}
                                 <td className="px-6 py-4 font-medium text-white">
                                     {mounted ? formatCompactCurrency(token.valueUsd ?? 0) : "--"}
                                 </td>

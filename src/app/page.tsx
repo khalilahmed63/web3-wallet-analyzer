@@ -14,6 +14,7 @@ export default function Home() {
   const [walletAddress, setWalletAddress] = useState(mockWalletSummary.address);
   const [inputAddress, setInputAddress] = useState(mockWalletSummary.address);
   const [tokens, setTokens] = useState(mockWalletSummary.tokens);
+  const [selectedChain, setSelectedChain] = useState("eth");
   const [totalValueUsd, setTotalValueUsd] = useState(mockWalletSummary.totalValueUsd);
   const [ethBalance, setEthBalance] = useState<number | null>(null);
   const [error, setError] = useState("");
@@ -28,7 +29,7 @@ export default function Home() {
     }
 
     if (!isAddress(trimmedAddress)) {
-      setError("Please enter a valid Ethereum wallet address.");
+      setError("Please enter a valid EVM wallet address.");
       return;
     }
 
@@ -37,75 +38,97 @@ export default function Home() {
 
     try {
       const result = await fetchEthBalance(trimmedAddress);
-      const ethPrice = 3500;
+      const nativePrice = 3500;
+
       const response = await fetch(
-        `/api/wallet?address=${encodeURIComponent(trimmedAddress)}&chain=polygon`
+        `/api/wallet?address=${encodeURIComponent(trimmedAddress)}&chain=${selectedChain}`,
       );
 
       const data = await response.json();
+
       if (!response.ok) {
         throw new Error(data.error || "Failed to fetch wallet tokens.");
       }
 
-      const realTokens = mapMoralisTokensToWalletTokens(
-        Array.isArray(data.result
-        ) ? data.result
-          : []
-      );
+      const tokenItems = Array.isArray(data)
+        ? data
+        : Array.isArray(data.result)
+          ? data.result
+          : [];
 
-      const tokensWithRealEth = realTokens.some((token) => token.symbol === "ETH")
+      const realTokens = mapMoralisTokensToWalletTokens(tokenItems);
+
+      const nativeSymbol =
+        selectedChain === "polygon"
+          ? "MATIC"
+          : selectedChain === "bsc"
+            ? "BNB"
+            : "ETH";
+
+      const nativeName =
+        selectedChain === "polygon"
+          ? "Polygon"
+          : selectedChain === "bsc"
+            ? "BNB"
+            : "Ethereum";
+
+      const tokensWithNative = realTokens.some(
+        (token) => token.symbol === nativeSymbol,
+      )
         ? realTokens.map((token) =>
-          token.symbol === "ETH"
+          token.symbol === nativeSymbol
             ? {
               ...token,
               balance: result.balanceEth,
-              priceUsd: ethPrice,
-              valueUsd: result.balanceEth * ethPrice,
-              logo: token.logo,
-              thumbnail: token.thumbnail,
+              priceUsd: nativePrice,
+              valueUsd: result.balanceEth * nativePrice,
+              logo: "",
+              thumbnail: token.thumbnail
             }
-            : token
+            : token,
         )
         : [
           {
-            symbol: "ETH",
-            name: "Ethereum",
+            symbol: nativeSymbol,
+            name: nativeName,
             balance: result.balanceEth,
-            priceUsd: ethPrice,
-            valueUsd: result.balanceEth * ethPrice,
+            priceUsd: nativePrice,
+            valueUsd: result.balanceEth * nativePrice,
             logo: "",
-            thumbnail: "",
-
+            thumbnail: ""
           },
           ...realTokens,
         ];
 
-      const total = tokensWithRealEth.reduce(
+      const total = tokensWithNative.reduce(
         (sum, token) => sum + token.valueUsd,
-        0
+        0,
       );
 
       setWalletAddress(trimmedAddress);
-      setTokens(tokensWithRealEth);
+      setTokens(tokensWithNative);
       setTotalValueUsd(total);
       setEthBalance(result.balanceEth);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to fetch wallet balance."
+          : "Failed to fetch wallet balance.",
       );
     } finally {
       setIsLoading(false);
     }
   }
 
+
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-10 sm:px-6 lg:px-8">
         <WalletInput
           value={inputAddress}
+          chain={selectedChain}
           onChange={setInputAddress}
+          onChainChange={setSelectedChain}
           onAnalyze={handleAnalyze}
           error={error}
           isLoading={isLoading}
@@ -113,6 +136,7 @@ export default function Home() {
 
         <WalletOverview
           address={walletAddress}
+          chain={selectedChain}
           ethBalance={ethBalance}
           totalValueUsd={totalValueUsd}
           assetsCount={tokens.length}
@@ -151,7 +175,10 @@ export default function Home() {
         ) : (
           <>
             <TopHoldings tokens={tokens} totalValueUsd={totalValueUsd} />
-            <PortfolioDistributionChart tokens={tokens} totalValueUsd={totalValueUsd} />
+            <PortfolioDistributionChart
+              tokens={tokens}
+              totalValueUsd={totalValueUsd}
+            />
             <TokenTable tokens={tokens} />
           </>
         )}

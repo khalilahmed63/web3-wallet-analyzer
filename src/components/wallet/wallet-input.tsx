@@ -1,8 +1,12 @@
 "use client";
 
+import { supportedChains } from "@/lib/chains";
+
 type WalletInputProps = {
   value: string;
+  chain: string;
   onChange: (value: string) => void;
+  onChainChange: (chain: string) => void;
   onAnalyze?: (address: string) => void;
   error?: string;
   isLoading?: boolean;
@@ -10,7 +14,9 @@ type WalletInputProps = {
 
 export function WalletInput({
   value,
+  chain,
   onChange,
+  onChainChange,
   onAnalyze,
   error,
   isLoading = false,
@@ -21,21 +27,33 @@ export function WalletInput({
         Web3 Wallet Analyzer
       </h1>
       <p className="mt-2 text-sm text-slate-400">
-        Analyze any Ethereum wallet and explore token balances, portfolio value,
-        and asset distribution.
+        Analyze any EVM wallet and explore token balances, portfolio value, and
+        asset distribution.
       </p>
 
-      <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-6 grid gap-3 sm:grid-cols-[1fr_180px_auto]">
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Paste wallet address (e.g. 0x...)"
           className={[
-            "flex-1 rounded-xl border bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none",
+            "rounded-xl border bg-slate-950 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none",
             error ? "border-red-500/60" : "border-slate-800",
           ].join(" ")}
         />
+
+        <select
+          value={chain}
+          onChange={(e) => onChainChange(e.target.value)}
+          className="rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-white focus:outline-none"
+        >
+          {supportedChains.map((item) => (
+            <option key={item.value} value={item.value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
 
         <button
           type="button"
