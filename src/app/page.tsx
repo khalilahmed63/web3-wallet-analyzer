@@ -5,6 +5,7 @@ import { TopHoldings } from "@/components/wallet/top-holdings";
 import { WalletInput } from "@/components/wallet/wallet-input";
 import { WalletOverview } from "@/components/wallet/wallet-overview";
 import { fetchEthBalance } from "@/lib/fetch-wallet-balance";
+import { mapMoralisTokensToWalletTokens } from "@/lib/map-wallet-tokens";
 import { mockWalletSummary } from "@/lib/mock-data";
 import { useState } from "react";
 import { isAddress } from "viem";
@@ -13,6 +14,7 @@ export default function Home() {
   const [walletAddress, setWalletAddress] = useState(mockWalletSummary.address);
   const [inputAddress, setInputAddress] = useState(mockWalletSummary.address);
   const [tokens, setTokens] = useState(mockWalletSummary.tokens);
+  const [totalValueUsd, setTotalValueUsd] = useState(mockWalletSummary.totalValueUsd);
   const [ethBalance, setEthBalance] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,33 +37,68 @@ export default function Home() {
 
     try {
       const result = await fetchEthBalance(trimmedAddress);
-      const ethPrice = 3500; // temp static price
+      const ethPrice = 3500;
+      const response = await fetch(
+        `/api/wallet?address=${encodeURIComponent(trimmedAddress)}&chain=polygon`
+      );
 
-      const updatedTokens = mockWalletSummary.tokens.map((token) => {
-        if (token.symbol === "ETH") {
-          return {
-            ...token,
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch wallet tokens.");
+      }
+
+      const realTokens = mapMoralisTokensToWalletTokens(
+        Array.isArray(data.result
+        ) ? data.result
+          : []
+      );
+
+      const tokensWithRealEth = realTokens.some((token) => token.symbol === "ETH")
+        ? realTokens.map((token) =>
+          token.symbol === "ETH"
+            ? {
+              ...token,
+              balance: result.balanceEth,
+              priceUsd: ethPrice,
+              valueUsd: result.balanceEth * ethPrice,
+              logo: token.logo,
+              thumbnail: token.thumbnail,
+            }
+            : token
+        )
+        : [
+          {
+            symbol: "ETH",
+            name: "Ethereum",
             balance: result.balanceEth,
+            priceUsd: ethPrice,
             valueUsd: result.balanceEth * ethPrice,
-          };
-        }
-        return token;
-      });
-      setTokens(updatedTokens);
+            logo: "",
+            thumbnail: "",
+
+          },
+          ...realTokens,
+        ];
+
+      const total = tokensWithRealEth.reduce(
+        (sum, token) => sum + token.valueUsd,
+        0
+      );
 
       setWalletAddress(trimmedAddress);
+      setTokens(tokensWithRealEth);
+      setTotalValueUsd(total);
       setEthBalance(result.balanceEth);
     } catch (err) {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to fetch wallet balance.",
+          : "Failed to fetch wallet balance."
       );
     } finally {
       setIsLoading(false);
     }
   }
-
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -77,6 +114,8 @@ export default function Home() {
         <WalletOverview
           address={walletAddress}
           ethBalance={ethBalance}
+          totalValueUsd={totalValueUsd}
+          assetsCount={tokens.length}
         />
 
         {isLoading ? (
@@ -111,8 +150,8 @@ export default function Home() {
           </>
         ) : (
           <>
-            <TopHoldings tokens={tokens} />
-            <PortfolioDistributionChart tokens={tokens} />
+            <TopHoldings tokens={tokens} totalValueUsd={totalValueUsd} />
+            <PortfolioDistributionChart tokens={tokens} totalValueUsd={totalValueUsd} />
             <TokenTable tokens={tokens} />
           </>
         )}

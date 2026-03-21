@@ -10,6 +10,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 2.45,
       priceUsd: 3450.12,
       valueUsd: 8452.79,
+      logo: "",
+      thumbnail: "",
     },
     {
       symbol: "USDC",
@@ -17,6 +19,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 6400,
       priceUsd: 1,
       valueUsd: 6400,
+      logo: "",
+      thumbnail: "",
     },
     {
       symbol: "WBTC",
@@ -24,6 +28,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 0.12,
       priceUsd: 68250.55,
       valueUsd: 8190.07,
+      logo: "",
+      thumbnail: "",
     },
     {
       symbol: "MATIC",
@@ -31,6 +37,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 1800,
       priceUsd: 1.12,
       valueUsd: 2016,
+      logo: "",
+      thumbnail: "",
     },
     {
       symbol: "TEL",
@@ -38,6 +46,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 78000,
       priceUsd: 0.0072,
       valueUsd: 561.6,
+      logo: "",
+      thumbnail: "",
     },
     {
       symbol: "USDT",
@@ -45,6 +55,8 @@ export const mockWalletSummary: WalletSummary = {
       balance: 3020,
       priceUsd: 1,
       valueUsd: 3020,
+      logo: "",
+      thumbnail: "",
     },
   ],
 };

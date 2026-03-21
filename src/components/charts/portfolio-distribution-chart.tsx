@@ -1,9 +1,9 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { mockWalletSummary } from "@/lib/mock-data";
 import { formatCompactCurrency } from "@/lib/formatters";
 import { useEffect, useState } from "react";
+import { WalletToken } from "@/lib/wallet";
 
 const COLORS = [
     "#22c55e",
@@ -15,14 +15,18 @@ const COLORS = [
 ];
 
 type PortfolioDistributionChartProps = {
-    tokens: typeof mockWalletSummary.tokens;
+    tokens: WalletToken[];
+    totalValueUsd: number;
 };
 
-export function PortfolioDistributionChart({ tokens }: PortfolioDistributionChartProps) {
-    const data = tokens.map((token) => ({
-        name: token.symbol,
-        value: token.valueUsd,
-    }));
+export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioDistributionChartProps) {
+    const data = tokens
+        .filter((token) => token.valueUsd > 0)
+        .map((token) => ({
+            name: token.symbol,
+            value: token.valueUsd,
+            fullName: token.name,
+        }));
 
     const [mounted, setMounted] = useState(false);
 
@@ -81,39 +85,42 @@ export function PortfolioDistributionChart({ tokens }: PortfolioDistributionChar
                 </div>
 
                 <div className="space-y-3">
-                    {mockWalletSummary.tokens.map((token, index) => {
-                        const percentage =
-                            (token.valueUsd / mockWalletSummary.totalValueUsd) * 100;
+                    {tokens
+                        .filter((token) => token.valueUsd > 0)
+                        .sort((a, b) => b.valueUsd - a.valueUsd)
+                        .map((token, index) => {
+                            const percentage =
+                                totalValueUsd > 0 ? (token.valueUsd / totalValueUsd) * 100 : 0;
 
-                        return (
-                            <div
-                                key={token.symbol}
-                                className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3"
-                            >
-                                <div className="flex items-center gap-3">
-                                    <span
-                                        className="h-3 w-3 rounded-full"
-                                        style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                    />
-                                    <div>
+                            return (
+                                <div
+                                    key={token.symbol}
+                                    className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span
+                                            className="h-3 w-3 rounded-full"
+                                            style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                        />
+                                        <div>
+                                            <p className="text-sm font-medium text-white">
+                                                {token.symbol}
+                                            </p>
+                                            <p className="text-xs text-slate-400">{token.name}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-right">
                                         <p className="text-sm font-medium text-white">
-                                            {token.symbol}
+                                            {mounted ? formatCompactCurrency(token.valueUsd ?? 0) : "--"}
                                         </p>
-                                        <p className="text-xs text-slate-400">{token.name}</p>
+                                        <p className="text-xs text-slate-400">
+                                            {percentage.toFixed(1)}%
+                                        </p>
                                     </div>
                                 </div>
-
-                                <div className="text-right">
-                                    <p className="text-sm font-medium text-white">
-                                        {mounted ? formatCompactCurrency(token.valueUsd ?? 0) : "--"}
-                                    </p>
-                                    <p className="text-xs text-slate-400">
-                                        {percentage.toFixed(1)}%
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
                 </div>
             </div>
         </div>

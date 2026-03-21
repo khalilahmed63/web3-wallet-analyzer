@@ -4,6 +4,8 @@ export type WalletToken = {
   balance: number;
   priceUsd: number;
   valueUsd: number;
+  logo: string;
+  thumbnail: string;
 };
 
 export type WalletSummary = {

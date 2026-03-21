@@ -3,9 +3,10 @@ import { SafeCurrency } from "@/lib/formatCompactCurrency";
 
 type TopHoldingsProps = {
     tokens: typeof mockWalletSummary.tokens;
+    totalValueUsd: number
 };
 
-export function TopHoldings({ tokens }: TopHoldingsProps) {
+export function TopHoldings({ tokens, totalValueUsd }: TopHoldingsProps) {
     const topHoldings = tokens
         .sort((a, b) => b.valueUsd - a.valueUsd)
         .slice(0, 3);
@@ -24,7 +25,7 @@ export function TopHoldings({ tokens }: TopHoldingsProps) {
             <div className="mt-6 grid gap-4 md:grid-cols-3">
                 {topHoldings.map((token, index) => {
                     const percentage =
-                        (token.valueUsd / mockWalletSummary.totalValueUsd) * 100;
+                        totalValueUsd > 0 ? (token.valueUsd / totalValueUsd) * 100 : 0;
 
                     return (
                         <div
