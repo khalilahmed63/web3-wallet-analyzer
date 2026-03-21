@@ -6,12 +6,16 @@ export function formatCurrency(value: number, maximumFractionDigits = 2) {
   }).format(value);
 }
 
-export function formatCompactCurrency(value: number, maximumFractionDigits = 2) {
+export function formatCompactCurrency(value: number = 0) {
+  if (typeof window === "undefined") {
+    return "$--"; // fallback during SSR
+  }
+
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     notation: "compact",
-    maximumFractionDigits,
+    maximumFractionDigits: 2,
   }).format(value);
 }
 
