@@ -4,7 +4,11 @@ import { mockWalletSummary } from "@/lib/mock-data";
 import { formatCompactCurrency } from "@/lib/formatters";
 import { useEffect, useState } from "react";
 
-export function TokenTable() {
+type TokenTableProps = {
+    tokens: typeof mockWalletSummary.tokens;
+};
+
+export function TokenTable({ tokens }: TokenTableProps) {
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -26,7 +30,7 @@ export function TokenTable() {
                     </thead>
 
                     <tbody className="divide-y divide-slate-800">
-                        {mockWalletSummary.tokens.map((token) => (
+                        {tokens.map((token) => (
                             <tr key={token.symbol} className="hover:bg-slate-800/60">
                                 <td className="px-6 py-4">
                                     <div>

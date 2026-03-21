@@ -11,3 +11,7 @@ export type WalletSummary = {
   totalValueUsd: number;
   tokens: WalletToken[];
 };
+
+export type RealEthBalance = {
+  balanceEth: number;
+};

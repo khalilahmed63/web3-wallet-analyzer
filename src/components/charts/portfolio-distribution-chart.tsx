@@ -14,8 +14,12 @@ const COLORS = [
     "#3b82f6",
 ];
 
-export function PortfolioDistributionChart() {
-    const data = mockWalletSummary.tokens.map((token) => ({
+type PortfolioDistributionChartProps = {
+    tokens: typeof mockWalletSummary.tokens;
+};
+
+export function PortfolioDistributionChart({ tokens }: PortfolioDistributionChartProps) {
+    const data = tokens.map((token) => ({
         name: token.symbol,
         value: token.valueUsd,
     }));
