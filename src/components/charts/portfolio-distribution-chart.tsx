@@ -98,10 +98,23 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
                                     className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <span
+                                        {token.thumbnail ?
+                                            <img
+                                                src={token.thumbnail}
+                                                alt={token.symbol}
+                                                className="h-6 w-6 rounded-full"
+                                                onError={(e) => {
+                                                    (e.target as HTMLImageElement).style.display = "none";
+                                                }}
+                                            />
+                                            :
+                                            <div className="h-6 w-6 bg-blue-600 font-bold rounded-full text-xs text-center items-center justify-center">{token.symbol.slice(0, 1)}</div>
+
+                                        }
+                                        {/* <span
                                             className="h-3 w-3 rounded-full"
                                             style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                                        />
+                                        /> */}
                                         <div>
                                             <p className="text-sm font-medium text-white">
                                                 {token.symbol}

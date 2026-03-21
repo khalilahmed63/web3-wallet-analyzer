@@ -1,6 +1,8 @@
+export type SupportedChainKey = "eth" | "polygon" | "base" | "arbitrum" | "bsc";
+
 export type SupportedChain = {
   label: string;
-  value: string;
+  value: SupportedChainKey;
 };
 
 export const supportedChains: SupportedChain[] = [

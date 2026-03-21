@@ -1,12 +1,12 @@
 "use client";
 
-import { supportedChains } from "@/lib/chains";
+import { supportedChains, type SupportedChainKey } from "@/lib/chains";
 
 type WalletInputProps = {
   value: string;
-  chain: string;
+  chain: SupportedChainKey;
   onChange: (value: string) => void;
-  onChainChange: (chain: string) => void;
+  onChainChange: (chain: SupportedChainKey) => void;
   onAnalyze?: (address: string) => void;
   error?: string;
   isLoading?: boolean;
@@ -45,7 +45,7 @@ export function WalletInput({
 
         <select
           value={chain}
-          onChange={(e) => onChainChange(e.target.value)}
+          onChange={(e) => onChainChange(e.target.value as SupportedChainKey)}
           className="rounded-xl border border-slate-800 bg-slate-950 px-4 py-3 text-sm text-white focus:outline-none"
         >
           {supportedChains.map((item) => (

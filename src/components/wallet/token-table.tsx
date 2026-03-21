@@ -10,7 +10,7 @@ type TokenTableProps = {
 
 export function TokenTable({ tokens }: TokenTableProps) {
     const [mounted, setMounted] = useState(false);
-
+    console.log(tokens, "tokens")
     useEffect(() => {
         setMounted(true);
     }, []);
@@ -32,7 +32,20 @@ export function TokenTable({ tokens }: TokenTableProps) {
                     <tbody className="divide-y divide-slate-800">
                         {tokens.map((token) => (
                             <tr key={token.symbol} className="hover:bg-slate-800/60">
-                                <td className="px-6 py-4">
+                                <td className="px-6 py-4 flex gap-2 items-center">
+                                    {token.thumbnail ?
+                                        <img
+                                            src={token.thumbnail}
+                                            alt={token.symbol}
+                                            className="h-6 w-6 rounded-full"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = "none";
+                                            }}
+                                        />
+                                        :
+                                        <div className="h-6 w-6 bg-blue-600 font-bold rounded-full text-xs text-center items-center justify-center">{token.symbol.slice(0, 1)}</div>
+
+                                    }
                                     <div>
                                         <p className="font-medium text-white">{token.symbol}</p>
                                         <p className="text-xs text-slate-400">{token.name}</p>
@@ -41,7 +54,6 @@ export function TokenTable({ tokens }: TokenTableProps) {
                                 <td className="px-6 py-4 text-slate-300">{token.balance}</td>
                                 {/* <td className="px-6 py-4 text-slate-300">
                                     {mounted ? formatCompactCurrency(token.priceUsd ?? 0) : "--"}
-
                                 </td> */}
                                 <td className="px-6 py-4 font-medium text-white">
                                     {mounted ? formatCompactCurrency(token.valueUsd ?? 0) : "--"}

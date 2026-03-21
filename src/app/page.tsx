@@ -4,19 +4,20 @@ import { TokenTable } from "@/components/wallet/token-table";
 import { TopHoldings } from "@/components/wallet/top-holdings";
 import { WalletInput } from "@/components/wallet/wallet-input";
 import { WalletOverview } from "@/components/wallet/wallet-overview";
-import { fetchEthBalance } from "@/lib/fetch-wallet-balance";
+import { SupportedChainKey } from "@/lib/chains";
+import { fetchNativeBalance } from "@/lib/fetch-wallet-balance";
 import { mapMoralisTokensToWalletTokens } from "@/lib/map-wallet-tokens";
 import { mockWalletSummary } from "@/lib/mock-data";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isAddress } from "viem";
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState(mockWalletSummary.address);
   const [inputAddress, setInputAddress] = useState(mockWalletSummary.address);
   const [tokens, setTokens] = useState(mockWalletSummary.tokens);
-  const [selectedChain, setSelectedChain] = useState("eth");
+  const [selectedChain, setSelectedChain] = useState<SupportedChainKey>("eth");
   const [totalValueUsd, setTotalValueUsd] = useState(mockWalletSummary.totalValueUsd);
-  const [ethBalance, setEthBalance] = useState<number | null>(null);
+  const [nativeBalance, setNativeBalance] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,8 +38,14 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const result = await fetchEthBalance(trimmedAddress);
-      const nativePrice = 3500;
+      const result = await fetchNativeBalance(trimmedAddress, selectedChain);
+
+      const nativePrice =
+        selectedChain === "polygon"
+          ? 1.1
+          : selectedChain === "bsc"
+            ? 600
+            : 3500;
 
       const response = await fetch(
         `/api/wallet?address=${encodeURIComponent(trimmedAddress)}&chain=${selectedChain}`,
@@ -79,10 +86,10 @@ export default function Home() {
           token.symbol === nativeSymbol
             ? {
               ...token,
-              balance: result.balanceEth,
+              balance: result.balance,
               priceUsd: nativePrice,
-              valueUsd: result.balanceEth * nativePrice,
-              logo: "",
+              valueUsd: result.balance * nativePrice,
+              logo: token.logo,
               thumbnail: token.thumbnail
             }
             : token,
@@ -91,9 +98,9 @@ export default function Home() {
           {
             symbol: nativeSymbol,
             name: nativeName,
-            balance: result.balanceEth,
+            balance: result.balance,
             priceUsd: nativePrice,
-            valueUsd: result.balanceEth * nativePrice,
+            valueUsd: result.balance * nativePrice,
             logo: "",
             thumbnail: ""
           },
@@ -108,7 +115,7 @@ export default function Home() {
       setWalletAddress(trimmedAddress);
       setTokens(tokensWithNative);
       setTotalValueUsd(total);
-      setEthBalance(result.balanceEth);
+      setNativeBalance(result.balance);
     } catch (err) {
       setError(
         err instanceof Error
@@ -119,6 +126,12 @@ export default function Home() {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+  if (walletAddress) {
+    handleAnalyze(walletAddress);
+  }
+}, [selectedChain]);
 
 
   return (
@@ -137,7 +150,7 @@ export default function Home() {
         <WalletOverview
           address={walletAddress}
           chain={selectedChain}
-          ethBalance={ethBalance}
+          nativeBalance={nativeBalance}
           totalValueUsd={totalValueUsd}
           assetsCount={tokens.length}
         />

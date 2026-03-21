@@ -1,7 +1,25 @@
 import { createPublicClient, http } from "viem";
-import { mainnet } from "viem/chains";
+import {
+  mainnet,
+  polygon,
+  base,
+  arbitrum,
+  bsc,
+} from "viem/chains";
 
-export const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
+const chainMap = {
+  eth: mainnet,
+  polygon,
+  base,
+  arbitrum,
+  bsc,
+};
+
+export type SupportedChainKey = keyof typeof chainMap;
+
+export function getPublicClient(chain: SupportedChainKey) {
+  return createPublicClient({
+    chain: chainMap[chain],
+    transport: http(),
+  });
+}

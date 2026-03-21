@@ -1,19 +1,24 @@
 import { formatEther, isAddress } from "viem";
-import { publicClient } from "@/lib/viem-client";
+import { getPublicClient, type SupportedChainKey } from "@/lib/viem-client";
 
-export async function fetchEthBalance(address: string) {
+export async function fetchNativeBalance(
+  address: string,
+  chain: SupportedChainKey,
+) {
   if (!isAddress(address)) {
     throw new Error("Invalid Ethereum address.");
   }
 
-  const balanceWei = await publicClient.getBalance({
+  const client = getPublicClient(chain);
+
+  const balanceWei = await client.getBalance({
     address,
   });
 
-  const balanceEth = Number(formatEther(balanceWei));
+  const balance = Number(formatEther(balanceWei));
 
   return {
     balanceWei,
-    balanceEth,
+    balance,
   };
 }
