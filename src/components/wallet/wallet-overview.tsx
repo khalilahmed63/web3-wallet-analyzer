@@ -1,0 +1,35 @@
+import { mockWalletSummary } from "@/lib/mock-data";
+import { formatCompactCurrency, truncateAddress } from "@/lib/formatters";
+
+export function WalletOverview() {
+  return (
+    <div className="grid gap-4 md:grid-cols-3">
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <p className="text-xs uppercase tracking-wide text-slate-500">
+          Wallet Address
+        </p>
+        <p className="mt-2 text-sm font-medium text-white">
+          {truncateAddress(mockWalletSummary.address)}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <p className="text-xs uppercase tracking-wide text-slate-500">
+          Total Portfolio Value
+        </p>
+        <p className="mt-2 text-2xl font-semibold text-white">
+          {formatCompactCurrency(mockWalletSummary.totalValueUsd)}
+        </p>
+      </div>
+
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+        <p className="text-xs uppercase tracking-wide text-slate-500">
+          Assets Held
+        </p>
+        <p className="mt-2 text-2xl font-semibold text-white">
+          {mockWalletSummary.tokens.length}
+        </p>
+      </div>
+    </div>
+  );
+}

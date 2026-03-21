@@ -1,0 +1,13 @@
+export type WalletToken = {
+  symbol: string;
+  name: string;
+  balance: number;
+  priceUsd: number;
+  valueUsd: number;
+};
+
+export type WalletSummary = {
+  address: string;
+  totalValueUsd: number;
+  tokens: WalletToken[];
+};
