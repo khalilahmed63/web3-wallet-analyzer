@@ -1,4 +1,5 @@
 export type WalletToken = {
+  address?: string;
   symbol: string;
   name: string;
   balance: number;

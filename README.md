@@ -30,8 +30,7 @@ https://web3-wallet-analyzer.vercel.app/
 ## 📸 Preview
 
 ![Wallet Overview](./public/screenshots/dashboard.png)
-![Portfolio Chart](./public/screenshots/chart.png)
-![Token Table](./public/screenshots/table.png)
+![Chart and Token Table](./public/screenshots/table.png)
 
 ---
 

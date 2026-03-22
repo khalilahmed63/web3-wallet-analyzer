@@ -1,6 +1,7 @@
 import { WalletToken } from "./wallet";
 
 type MoralisToken = {
+  token_address?: string;
   symbol?: string;
   name?: string;
   decimals?: number;
@@ -24,6 +25,7 @@ export function mapMoralisTokensToWalletTokens(
       const thumbnail = item.thumbnail;
 
       return {
+        address: item.token_address,
         symbol: item.symbol || "UNKNOWN",
         name: item.name || "Unknown Token",
         balance,

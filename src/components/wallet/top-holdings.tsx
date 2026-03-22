@@ -29,7 +29,7 @@ export function TopHoldings({ tokens, totalValueUsd }: TopHoldingsProps) {
 
                     return (
                         <div
-                            key={token.symbol}
+                            key={token.address ?? `${token.symbol}-${index}`}
                             className="rounded-2xl border border-slate-800 bg-slate-950/70 p-5"
                         >
                             <div className="flex items-start justify-between gap-3">

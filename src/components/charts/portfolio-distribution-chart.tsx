@@ -45,6 +45,7 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
                         Asset allocation across wallet holdings.
                     </p>
                 </div>
+                <h2 className="text-lg font-semibold text-white">Count ({tokens && tokens.length})</h2>
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -62,7 +63,7 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
                             >
                                 {data.map((entry, index) => (
                                     <Cell
-                                        key={entry.name}
+                                        key={`${entry.name}-${index}`}
                                         fill={COLORS[index % COLORS.length]}
                                     />
                                 ))}
@@ -84,7 +85,7 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
                     </ResponsiveContainer>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3 max-h-80 overflow-y-auto">
                     {tokens
                         .filter((token) => token.valueUsd > 0)
                         .sort((a, b) => b.valueUsd - a.valueUsd)
@@ -94,7 +95,7 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
 
                             return (
                                 <div
-                                    key={token.symbol}
+                                    key={token.address ?? `${token.symbol}-${index}`}
                                     className="flex items-center justify-between rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3"
                                 >
                                     <div className="flex items-center gap-3">

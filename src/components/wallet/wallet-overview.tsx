@@ -53,7 +53,7 @@ export function WalletOverview({
                 <p className="text-xs uppercase tracking-wide text-slate-500">
                     Total Portfolio Value
                 </p>
-                <p className="mt-2 text-2xl font-semibold text-white">
+                <p className="mt-2 text-2xl font-semibold text-white overflow-auto">
                     <SafeCurrency value={totalValueUsd} />
                 </p>
             </div>

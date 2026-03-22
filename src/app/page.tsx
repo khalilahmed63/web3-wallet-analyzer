@@ -86,6 +86,7 @@ export default function Home() {
           token.symbol === nativeSymbol
             ? {
               ...token,
+              address: token.address ?? `native-${selectedChain}`,
               balance: result.balance,
               priceUsd: nativePrice,
               valueUsd: result.balance * nativePrice,
@@ -96,6 +97,7 @@ export default function Home() {
         )
         : [
           {
+            address: `native-${selectedChain}`,
             symbol: nativeSymbol,
             name: nativeName,
             balance: result.balance,
@@ -128,10 +130,10 @@ export default function Home() {
   }
 
   useEffect(() => {
-  if (walletAddress) {
-    handleAnalyze(walletAddress);
-  }
-}, [selectedChain]);
+    if (walletAddress) {
+      handleAnalyze(walletAddress);
+    }
+  }, [selectedChain]);
 
 
   return (

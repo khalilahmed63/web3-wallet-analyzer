@@ -10,16 +10,19 @@ type TokenTableProps = {
 
 export function TokenTable({ tokens }: TokenTableProps) {
     const [mounted, setMounted] = useState(false);
-    console.log(tokens, "tokens")
     useEffect(() => {
         setMounted(true);
     }, []);
     return (
         <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
-            <h2 className="text-lg font-semibold text-white">Token Balances</h2>
+            <div className="flex items-center justify-between">
 
-            <div className="mt-6 overflow-hidden rounded-xl border border-slate-800">
-                <table className="w-full text-left text-sm">
+                <h2 className="text-lg font-semibold text-white">Token Balances </h2>
+                <h2 className="text-lg font-semibold text-white">Count ({tokens && tokens.length})</h2>
+            </div>
+
+            <div className="mt-6 overflow-hidden rounded-xl border border-slate-800 max-h-80 overflow-y-auto">
+                <table className="w-full text-left text-sm ">
                     <thead className="border-b border-slate-800 bg-slate-950/70 text-xs uppercase tracking-wide text-slate-400">
                         <tr>
                             <th className="px-6 py-4">Token</th>
@@ -30,8 +33,8 @@ export function TokenTable({ tokens }: TokenTableProps) {
                     </thead>
 
                     <tbody className="divide-y divide-slate-800">
-                        {tokens.map((token) => (
-                            <tr key={token.symbol} className="hover:bg-slate-800/60">
+                        {tokens.map((token, index) => (
+                            <tr key={token.address ?? `${token.symbol}-${index}`} className="hover:bg-slate-800/60">
                                 <td className="px-6 py-4 flex gap-2 items-center">
                                     {token.thumbnail ?
                                         <img
