@@ -45,7 +45,10 @@ export function PortfolioDistributionChart({ tokens, totalValueUsd }: PortfolioD
                         Asset allocation across wallet holdings.
                     </p>
                 </div>
-                <h2 className="text-lg font-semibold text-white">Count ({tokens && tokens.length})</h2>
+                {(!mounted) ? null :
+                    <h2 className="text-lg font-semibold text-white">Count ({tokens?.length ?? 0})
+                    </h2>
+                }
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">

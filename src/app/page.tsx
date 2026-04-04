@@ -29,10 +29,10 @@ export default function Home() {
       return;
     }
 
-    if (!isAddress(trimmedAddress)) {
-      setError("Please enter a valid EVM wallet address.");
-      return;
-    }
+    // if (!isAddress(trimmedAddress)) {
+    //   setError("Please enter a valid EVM wallet address.");
+    //   return;
+    // }
 
     setError("");
     setIsLoading(true);
