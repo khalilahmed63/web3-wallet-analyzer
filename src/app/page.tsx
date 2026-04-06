@@ -155,13 +155,27 @@ export default function Home() {
           isLoading={isLoading}
         />
 
-        <WalletOverview
-          address={walletAddress}
-          chain={selectedChain}
-          nativeBalance={nativeBalance}
-          totalValueUsd={totalValueUsd}
-          assetsCount={tokens.length}
-        />
+        {isLoading ? (
+          <div className="grid gap-4 md:grid-cols-5">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div
+                key={i}
+                className="animate-pulse rounded-2xl border border-slate-800 bg-slate-900/70 p-5"
+              >
+                <div className="h-3 w-20 rounded bg-slate-800" />
+                <div className="mt-3 h-8 w-3/4 max-w-40 rounded bg-slate-800" />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <WalletOverview
+            address={walletAddress}
+            chain={selectedChain}
+            nativeBalance={nativeBalance}
+            totalValueUsd={totalValueUsd}
+            assetsCount={tokens.length}
+          />
+        )}
 
         {isLoading ? (
           <>
