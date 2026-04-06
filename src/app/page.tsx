@@ -7,16 +7,16 @@ import { WalletOverview } from "@/components/wallet/wallet-overview";
 import { SupportedChainKey } from "@/lib/chains";
 import { fetchNativeBalance } from "@/lib/fetch-wallet-balance";
 import { mapMoralisTokensToWalletTokens } from "@/lib/map-wallet-tokens";
-import { mockWalletSummary } from "@/lib/mock-data";
+import type { WalletToken } from "@/lib/wallet";
 import { useEffect, useState } from "react";
 import { isAddress } from "viem";
 
 export default function Home() {
-  const [walletAddress, setWalletAddress] = useState(mockWalletSummary.address);
-  const [inputAddress, setInputAddress] = useState(mockWalletSummary.address);
-  const [tokens, setTokens] = useState(mockWalletSummary.tokens);
+  const [walletAddress, setWalletAddress] = useState("");
+  const [inputAddress, setInputAddress] = useState("");
+  const [tokens, setTokens] = useState<WalletToken[]>([]);
   const [selectedChain, setSelectedChain] = useState<SupportedChainKey>("eth");
-  const [totalValueUsd, setTotalValueUsd] = useState(mockWalletSummary.totalValueUsd);
+  const [totalValueUsd, setTotalValueUsd] = useState(0);
   const [nativeBalance, setNativeBalance] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -29,10 +29,10 @@ export default function Home() {
       return;
     }
 
-    // if (!isAddress(trimmedAddress)) {
-    //   setError("Please enter a valid EVM wallet address.");
-    //   return;
-    // }
+    if (!isAddress(trimmedAddress)) {
+      setError("Please enter a valid EVM wallet address.");
+      return;
+    }
 
     setError("");
     setIsLoading(true);
@@ -135,6 +135,12 @@ export default function Home() {
     }
   }, [selectedChain]);
 
+  function handleInputChange(value: string) {
+    setInputAddress(value);
+    if (error) {
+      setError("");
+    }
+  }
 
   return (
     <main className="min-h-screen bg-slate-950 text-slate-50">
@@ -142,7 +148,7 @@ export default function Home() {
         <WalletInput
           value={inputAddress}
           chain={selectedChain}
-          onChange={setInputAddress}
+          onChange={handleInputChange}
           onChainChange={setSelectedChain}
           onAnalyze={handleAnalyze}
           error={error}

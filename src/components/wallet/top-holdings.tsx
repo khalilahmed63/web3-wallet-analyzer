@@ -10,6 +10,8 @@ export function TopHoldings({ tokens, totalValueUsd }: TopHoldingsProps) {
     const topHoldings = tokens
         .sort((a, b) => b.valueUsd - a.valueUsd)
         .slice(0, 3);
+    
+    
 
     return (
         <div className="rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
